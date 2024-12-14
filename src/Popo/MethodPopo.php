@@ -7,39 +7,19 @@ use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 
-class MethodPopo
+class MethodPopo extends BasePopo
 {
-    /**
-     * @param string $name Name of the method.
-     * @param string $visibility Visibility of the method (public, protected, private).
-     * @param bool $isStatic Whether the method is static.
-     * @param bool $isFinal Whether the method is final.
-     * @param bool $isAbstract Whether the method is abstract.
-     * @param string|null $returnType The return type of the method.
-     * @param string|null $docComment The doc comment for the method.
-     * @param ClassMethod $astNode The raw AST node for the method.
-     */
     public function __construct(
-        public string $name,
-        public string $visibility,
+        string $name,
+        string $visibility,
         public bool $isStatic,
         public bool $isFinal,
         public bool $isAbstract,
         public ?string $returnType,
-        public ?string $docComment,
-        public ClassMethod $astNode
-    ) {}
-
-    /**
-     * Update the method's name.
-     *
-     * @param string $newName
-     * @return void
-     */
-    public function updateName(string $newName): void
-    {
-        $this->name = $newName;
-        $this->astNode->name->name = $newName;
+        ?string $docComment,
+        ClassMethod $astNode
+    ) {
+        parent::__construct($name, $astNode, $docComment, $visibility);
     }
 
     /**
@@ -72,13 +52,5 @@ class MethodPopo
         }
 
         return $methodNode;
-    }
-
-    public function updatePhpDocToInherit(): void
-    {
-        $this->docComment = '@inheritdoc';
-
-        // Update the AST node's doc comment
-        $this->astNode->setDocComment(new Doc("/**\n * @inheritdoc\n */"));
     }
 }

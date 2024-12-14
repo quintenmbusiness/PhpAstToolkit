@@ -2,7 +2,9 @@
 
 namespace quintenmbusiness\PhpAstToolkit\Popo;
 
+use PhpParser\Comment\Doc;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\DNumber;
 use PhpParser\Node\Scalar\LNumber;
@@ -11,20 +13,16 @@ use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Property;
 use PhpParser\Node\Stmt\PropertyProperty;
 
-class PropertyPopo
+class PropertyPopo extends BasePopo
 {
-    /**
-     * @param string $name Name of the property.
-     * @param string $visibility Visibility of the property (public, protected, private).
-     * @param string|null $type The type of the property.
-     * @param Property $astNode The raw AST node for the property.
-     */
     public function __construct(
-        public string $name,
-        public string $visibility,
+        string $name,
+        string $visibility,
         public ?string $type,
-        public Property $astNode
-    ) {}
+        Property $astNode
+    ) {
+        parent::__construct($name, $astNode, null, $visibility);
+    }
 
     /**
      * Update the name of the property.
@@ -81,30 +79,7 @@ class PropertyPopo
     {
         $this->type = $newType;
 
-        $this->astNode->type = $newType !== null ? new \PhpParser\Node\Identifier($newType) : null;
-    }
-
-    /**
-     * Get the doc comment for the property.
-     *
-     * @return string|null
-     */
-    public function getDocComment(): ?string
-    {
-        return $this->astNode->getDocComment()?->getText();
-    }
-
-    /**
-     * Update the doc comment for the property.
-     *
-     * @param string|null $docComment
-     * @return void
-     */
-    public function updateDocComment(?string $docComment): void
-    {
-        $this->astNode->setDocComment(
-            $docComment !== null ? new \PhpParser\Comment\Doc($docComment) : null
-        );
+        $this->astNode->type = $newType !== null ? new Identifier($newType) : null;
     }
 
     /**
@@ -132,22 +107,19 @@ class PropertyPopo
     public function updateDefaultValue(mixed $defaultValue): void
     {
         foreach ($this->astNode->props as $prop) {
-            if ($defaultValue !== null) {
-                $prop->default = match (true) {
-                    is_int($defaultValue) => new LNumber($defaultValue),
-                    is_float($defaultValue) => new DNumber($defaultValue),
-                    is_string($defaultValue) => new String_($defaultValue),
-                    is_bool($defaultValue) => new Expr\ConstFetch(
-                        new Name($defaultValue ? 'true' : 'false')
-                    ),
-                    is_null($defaultValue) => new Expr\ConstFetch(
-                        new Name('null')
-                    ),
-                    default => throw new \InvalidArgumentException("Unsupported default value type: " . gettype($defaultValue)),
-                };
-            } else {
-                $prop->default = null; // Clear the default value
-            }
+            $prop->default = match (true) {
+                is_int($defaultValue) => new LNumber($defaultValue),
+                is_float($defaultValue) => new DNumber($defaultValue),
+                is_string($defaultValue) => new String_($defaultValue),
+                is_bool($defaultValue) => new Expr\ConstFetch(
+                    new Name($defaultValue ? 'true' : 'false')
+                ),
+                null === $defaultValue => null,
+                is_null($defaultValue) => new Expr\ConstFetch(
+                    new Name('null')
+                ),
+                default => throw new \InvalidArgumentException("Unsupported default value type: " . gettype($defaultValue)),
+            };
         }
     }
 }

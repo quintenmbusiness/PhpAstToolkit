@@ -5,39 +5,37 @@ declare(strict_types=1);
 namespace quintenmbusiness\PhpAstToolkit\Popo;
 
 use PhpParser\Node\Stmt\Class_;
+use Tightenco\Collect\Support\Collection;
 
-class ClassPopo
+class ClassPopo extends BasePopo
 {
+    /**
+     * @var Collection<MethodPopo>
+     */
+    public Collection $methods;
+
+    /**
+     * @var Collection<PropertyPopo>
+     */
+    public Collection $properties;
+
     public function __construct(
-        public string $name,
+        string $name,
         public string $absolutePath,
-        public Class_ $astNode,
-        /**
-         * @var MethodPopo[] Array of method popos.
-         */
-        public array $methods = [],
-        /**
-         * @var PropertyPopo[] Array of property popos.
-         */
-        public array $properties = []
-    ) {}
-
-    public function addMethod(MethodPopo $method): void
-    {
-        $this->methods[] = $method;
+        Collection $methods,
+        Collection $properties,
+        Class_ $astNode
+    ) {
+        parent::__construct($name, $astNode);
+        $this->methods = collect($methods);
+        $this->properties = collect($properties);
     }
 
-    public function addProperty(PropertyPopo $property): void
-    {
-        $this->properties[] = $property;
-    }
-
-    public function updateName(string $newName): void
-    {
-        $this->name = $newName;
-        $this->astNode->name->name = $newName;
-    }
-
+    /**
+     * Get the directory path of the class file.
+     *
+     * @return string
+     */
     public function getDirectory(): string
     {
         return dirname($this->absolutePath);
@@ -50,14 +48,6 @@ class ClassPopo
      */
     public function syncAst(): void
     {
-        $this->astNode->stmts = [];
-
-        foreach ($this->methods as $methodPopo) {
-            $this->astNode->stmts[] = $methodPopo->astNode;
-        }
-
-        foreach ($this->properties as $propertyPopo) {
-            $this->astNode->stmts[] = $propertyPopo->astNode;
-        }
+        $this->astNode->stmts = $this->properties->merge($this->methods)->map(fn($popo) => $popo->astNode)->toArray();
     }
 }

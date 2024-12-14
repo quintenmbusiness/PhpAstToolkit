@@ -5,44 +5,63 @@ declare(strict_types=1);
 namespace quintenmbusiness\PhpAstToolkit\Core;
 
 use quintenmbusiness\PhpAstToolkit\Popo\ClassPopo;
+use Tightenco\Collect\Support\Collection;
 
 class ClassFilter
 {
     /**
-     * @var ClassPopo[]
+     * @var Collection<int, ClassPopo>
      */
-    private array $classes;
+    private Collection $classes;
 
-    public function __construct(array $classes)
+    /**
+     * @param Collection<int, ClassPopo> $classes
+     */
+    public function __construct(Collection $classes)
     {
         $this->classes = $classes;
     }
 
-    public function searchByClassName(string $className): array
+    /**
+     * @param string $className
+     * @return Collection<int, ClassPopo>
+     */
+    public function searchByClassName(string $className): Collection
     {
-        return array_filter($this->classes, fn(ClassPopo $class) => stripos($class->name, $className) !== false);
+        return $this->classes->filter(fn(ClassPopo $class) => stripos($class->name, $className) !== false);
     }
 
-    public function filterByMethodName(string $methodName): array
+    /**
+     * @param string $methodName
+     * @return Collection<int, ClassPopo>
+     */
+    public function filterByMethodName(string $methodName): Collection
     {
-        return array_filter($this->classes, fn(ClassPopo $class) =>
-        array_filter($class->getMethods(), fn($method) => stripos($method->getName(), $methodName) !== false)
+        return $this->classes->filter(fn(ClassPopo $class) =>
+        $class->methods->filter(fn($method) => stripos($method->getName(), $methodName) !== false)->isNotEmpty()
         );
     }
 
-    public function filterByPropertyName(string $propertyName): array
+    /**
+     * @param string $propertyName
+     * @return Collection
+     */
+    public function filterByPropertyName(string $propertyName): Collection
     {
-        return array_filter($this->classes, fn(ClassPopo $class) =>
-        array_filter($class->getProperties(), fn($property) => stripos($property->getName(), $propertyName) !== false)
+        return $this->classes->filter(fn(ClassPopo $class) =>
+        $class->properties->filter(fn($property) => stripos($property->getName(), $propertyName) !== false)->isNotEmpty()
         );
     }
 
+    /**
+     * @return void
+     */
     public function printSummary(): void
     {
-        foreach ($this->classes as $class) {
+        $this->classes->each(function (ClassPopo $class) {
             echo "Class: {$class->name}\n";
-            echo "Methods: " . implode(', ', array_map(fn($m) => $m->getName(), $class->getMethods())) . "\n";
-            echo "Properties: " . implode(', ', array_map(fn($p) => $p->getName(), $class->getProperties())) . "\n";
-        }
+            echo "Methods: " . $class->methods->map(fn($m) => $m->getName())->implode(', ') . "\n";
+            echo "Properties: " . $class->properties->map(fn($p) => $p->getName())->implode(', ') . "\n";
+        });
     }
 }

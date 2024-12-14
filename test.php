@@ -8,16 +8,24 @@ use quintenmbusiness\PhpAstToolkit\Core\ClassFilter;
 use quintenmbusiness\PhpAstToolkit\Core\DirectoryScanner;
 use quintenmbusiness\PhpAstToolkit\Service\ClassService;
 
-$path = 'C:\Users\denni\Desktop\projects\packages\PhpAstToolkit\test_folder';
-
 try {
+    // Create a DirectoryScanner instance
     $scanner = new DirectoryScanner();
-    $classes = $scanner->scan($path, true); // Recursive scan
+
+    // Scan the base directory recursively
+    $directories = $scanner->scan(null, true);
+    $classes = $scanner->collectClassesFromDirectories($directories);
+
+    // Initialize ClassFilter and ClassService
     $filter = new ClassFilter($classes);
     $service = new ClassService();
 
     // Search for the class "BasicExample"
-    $class = $filter->searchByClassName('BasicExample')[0];
+    $class = $filter->searchByClassName('BasicExample')->first();
+
+    if (!$class) {
+        throw new Exception("Class 'BasicExample' not found.");
+    }
 
     $newClassName = 'CopyExample';
     $newInterfaceName = 'CopyExampleInterface';
