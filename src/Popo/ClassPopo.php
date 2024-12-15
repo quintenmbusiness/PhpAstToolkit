@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace quintenmbusiness\PhpAstToolkit\Popo;
 
 use PhpParser\Node\Stmt\Class_;
-use Tightenco\Collect\Support\Collection;
+use Illuminate\Support\Collection;
 
 class ClassPopo extends BasePopo
 {

@@ -2,7 +2,7 @@
 
 namespace quintenmbusiness\PhpAstToolkit\Popo;
 
-use Tightenco\Collect\Support\Collection;
+use Illuminate\Support\Collection;
 
 class DirectoryPopo
 {

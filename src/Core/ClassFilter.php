@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace quintenmbusiness\PhpAstToolkit\Core;
 
 use quintenmbusiness\PhpAstToolkit\Popo\ClassPopo;
-use Tightenco\Collect\Support\Collection;
+use Illuminate\Support\Collection;
 
 class ClassFilter
 {

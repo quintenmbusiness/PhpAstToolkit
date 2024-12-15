@@ -7,7 +7,7 @@ namespace quintenmbusiness\PhpAstToolkit\Core;
 use Exception;
 use quintenmbusiness\PhpAstToolkit\Popo\DirectoryPopo;
 use quintenmbusiness\PhpAstToolkit\Popo\ClassPopo;
-use Tightenco\Collect\Support\Collection;
+use Illuminate\Support\Collection;
 
 class DirectoryScanner
 {

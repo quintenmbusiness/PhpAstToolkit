@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace quintenmbusiness\PhpAstToolkit\Core;
 
 use Exception;
+use Illuminate\Support\Collection;
 use PhpParser\Error;
 use PhpParser\Node;
 use PhpParser\NodeTraverser;
