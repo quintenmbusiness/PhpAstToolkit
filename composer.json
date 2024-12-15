@@ -5,7 +5,11 @@
     "require": {
         "php": ">=8.1",
         "nikic/php-parser": "^5.3",
+<<<<<<< Updated upstream
         "tightenco/collect": "^9.52"
+=======
+        "tightenco/collect": "^10.0 || ^9.52"
+>>>>>>> Stashed changes
     },
     "autoload": {
         "psr-4": {
@@ -20,7 +24,11 @@
     ],
     "license": "MIT",
     "require-dev": {
+<<<<<<< Updated upstream
         "phpunit/phpunit": "^9.5"
+=======
+        "phpunit/phpunit": "^10.0 || ^9.5"
+>>>>>>> Stashed changes
     },
     "scripts": {
         "run-generators": "php test.php"
