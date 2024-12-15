@@ -72,8 +72,8 @@ class DirectoryScanner
      */
     private function getDirectoryPopos(string $directory, bool $recursive, array $exclude): Collection
     {
-        $directories = collect();
-        $files = collect();
+        $directories = new Collection;
+        $files = new Collection;
 
         $iterator = new \DirectoryIterator($directory);
         foreach ($iterator as $file) {
@@ -90,7 +90,7 @@ class DirectoryScanner
             if ($file->isDir()) {
                 $subdirectories = $recursive
                     ? $this->getDirectoryPopos($path, $recursive, $exclude)
-                    : collect();
+                    : new Collection;
 
 
                 $subdirectoryClasses = $subdirectories->flatMap(fn($subdirectory) => $subdirectory->classes);
@@ -137,7 +137,7 @@ class DirectoryScanner
 
                 return $classes;
             } catch (Exception $e) {
-                return collect();
+                return new Collection;
             }
         });
     }
@@ -150,7 +150,7 @@ class DirectoryScanner
      */
     public function collectClassesFromDirectories(Collection $directories): Collection
     {
-        $classes = collect();
+        $classes = new Collection;
 
         foreach ($directories as $directory) {
 
