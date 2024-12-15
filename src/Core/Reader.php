@@ -71,8 +71,8 @@ class Reader extends NodeVisitorAbstract
             $classPopo = new ClassPopo(
                 $node->name->toString(),
                 $this->filePath,
-                collect(),
-                collect(),
+                new Collection,
+                new Collection,
                 $node,
             );
 
